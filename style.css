@@ -116,5 +116,32 @@ body {
 
 .winning-message {
     display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(0, 0, 0, 0.8);
+    flex-direction: column;
 }
 
+.winning-message-button {
+    font-size: 2.5rem;
+    background-color: rgb(65, 67, 184, 1);
+    padding: 10px 15px;
+    border: none;
+    margin-top: 16px;
+    color: white;
+}
+
+.winning-message-button:hover {
+    color: rgb(65, 67, 184, 1);
+    background-color: white;
+}
+
+.winning-message-text {
+    color: white;
+    font-size: 5rem;
+}
