@@ -1,5 +1,7 @@
 const cellElements = document.querySelectorAll('[data-cell]'); //Selecionar atributo data-cell
 const board = document.querySelector('[data-board]'); //Selecionar atributo data-board
+const winningMessage = document.querySelector('[data-winning-message]'); //Selecionar atributo data-winning-message
+const winningMessageTextElement = document.querySelector('[data-winning-message-text]'); //Selecionar atributo data-winning-message-text
 
 //Variavel para Verificar Turno
 let isCircleTurn;
@@ -27,6 +29,15 @@ const startGame = () => {
 
     board.classList.add('x');
 
+}
+
+//Finalizar o Jogo
+const endGame = (isDraw) => {
+    if(isDraw) {
+        winningMessageTextElement.innerText = "Empate!";
+    } else {
+        winningMessageTextElement.innerText = isCircleTurn ? "Circulo Venceu!" : "X Venceu!";
+    }
 }
 
 //Função para Verificar Vitória
@@ -69,7 +80,7 @@ const handClick = (e) => {
     //Verificar Vitória
     const isWin = checkWin(classToAdd);
     if(isWin) {
-        console.log("winner!");
+        endGame(true);
     }
     //Verificar Empate
 
