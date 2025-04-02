@@ -2,6 +2,7 @@ const cellElements = document.querySelectorAll('[data-cell]'); //Selecionar atri
 const board = document.querySelector('[data-board]'); //Selecionar atributo data-board
 const winningMessage = document.querySelector('[data-winning-message]'); //Selecionar atributo data-winning-message
 const winningMessageTextElement = document.querySelector('[data-winning-message-text]'); //Selecionar atributo data-winning-message-text
+const restartButton = document.querySelector('[data-restart-button]'); //Selecionar atributo data-restart-button
 
 //Variavel para Verificar Turno
 let isCircleTurn;
@@ -20,24 +21,31 @@ const winningCombinations = [
 
 //Começar o Jogo
 const startGame = () => {
+    
+    isCircleTurn = false; //O Jogo inicializa com o X então isCircleTurn = false
+    
     //For of - Adicionar em cada celula um EnvetListener
     for(const cell of cellElements) {
-        cell.addEventListener("click", handClick, { once: true });
+        cell.classList.remove('circle');
+        cell.classList.remove('x');
+        cell.removeEventListener('click', handleClick);
+        cell.addEventListener('click', handleClick, { once: true });
     }
 
-    isCircleTurn = false;
+    setBoardHoverClass();
 
-    board.classList.add('x');
-
+    winningMessage.classList.remove('show-winning-message');
 }
 
 //Finalizar o Jogo
-const endGame = (isDraw) => {
+const endGame = (isDraw) => { //Recebe o isDraw como parametro
     if(isDraw) {
         winningMessageTextElement.innerText = "Empate!";
     } else {
-        winningMessageTextElement.innerText = isCircleTurn ? "Circulo Venceu!" : "X Venceu!";
+        winningMessageTextElement.innerText = isCircleTurn ? "O Venceu!" : "X Venceu!";
     }
+
+    winningMessage.classList.add('show-winning-message');
 }
 
 //Função para Verificar Vitória
@@ -49,15 +57,20 @@ const checkWin = (currentPlayer) => {
     });
 } //Retorna "true" ou "false"
 
+//Função para Verificar Empate
+const checkDraw = () => {
+    return [... cellElements].every(cell => {
+        return cell.classList.contains('x') || cell.classList.contains('circle');
+    });
+} //Retorna "true" ou "false"
+
 //Adicionar na celula clicada
 const placeMark = (cell, classToAdd) => {
     cell.classList.add(classToAdd);
 }
 
-//Mudar o Turno
-const swapTurns = () => {
-    isCircleTurn = !isCircleTurn;
-
+//Mudar hover da classe do board
+const setBoardHoverClass = () => {
     board.classList.remove('circle');
     board.classList.remove('x');
 
@@ -68,27 +81,41 @@ const swapTurns = () => {
     }
 }
 
+//Mudar o Turno
+const swapTurns = () => {
+    isCircleTurn = !isCircleTurn;
+
+    setBoardHoverClass();
+}
+
 //Identificar o click
-const handClick = (e) => {
+const handleClick = (e) => {
     
     //Colocar marca "X" ou "O"
     const cell = e.target;
     const classToAdd = isCircleTurn ? 'circle': 'x';
 
     placeMark(cell, classToAdd);
-
+    
     //Verificar Vitória
     const isWin = checkWin(classToAdd);
-    if(isWin) {
-        endGame(true);
-    }
+    
     //Verificar Empate
-
-    //Mudar Símbolo X e O
-    swapTurns();
+    const isDraw = checkDraw();
+    
+    //Verificações Empate ou Vitória
+    if(isWin) {
+        endGame(false);
+    } else if (isDraw) {
+        endGame(true);
+    } else {
+        swapTurns(); //Mudar Símbolo X e O
+    }
 
 }
 
 //Inicar o Jogo
 startGame();
 
+//Reiniciar o Jogo
+restartButton.addEventListener('click', startGame);
